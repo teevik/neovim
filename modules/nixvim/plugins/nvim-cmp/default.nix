@@ -5,17 +5,44 @@ let
 in
 {
   config = mkIf cfg.enable {
-    extraConfigLua = /* lua */ ''
-      local has_words_before = function()
-        unpack = unpack or table.unpack
-        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-      end
-    '';
-
     options = {
       completeopt = "menu,menuone,noinsert";
     };
+
+    extraConfigLua = /* lua */ ''
+      local which_key = require("which-key")
+
+      local is_toggled = true
+
+      local toggle = function()
+        is_toggled = not is_toggled
+
+        if is_toggled then
+          vim.cmd('Copilot enable')
+        else
+          vim.cmd('Copilot disable')
+        end
+      end
+
+      require('which-key').register({
+        t = {
+          name = "Toggle",
+          c = { toggle, "Toggle Copilot" },
+        },
+      }, { mode = "n", prefix = "<leader>", silent = true })
+    '';
+
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>tc";
+        action = "<cmd>:lua require('copilot.suggestion').toggle_auto_trigger()<cr>";
+        options = {
+          silent = true;
+          desc = "Toggle Copilot";
+        };
+      }
+    ];
 
     plugins = {
       luasnip.enable = true;
@@ -54,15 +81,19 @@ in
             cmp.mapping(function(fallback)
               local luasnip = require("luasnip")
 
-              if cmp.visible() then
+              local has_words_before = function()
+                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+              end
+
+              if cmp.visible() and has_words_before() then
                 -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
                 cmp.select_next_item()
               -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
               -- this way you will only jump inside the snippet region
               elseif luasnip.expand_or_locally_jumpable() then
                 luasnip.expand_or_jump()
-              elseif has_words_before() then
-                cmp.complete()
               else
                 fallback()
               end
@@ -73,7 +104,13 @@ in
             cmp.mapping(function(fallback)
               local luasnip = require("luasnip")
 
-              if cmp.visible() then
+              local has_words_before = function()
+                if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+              end
+
+              if cmp.visible() and has_words_before() then
                 cmp.select_prev_item()
               elseif luasnip.jumpable(-1) then
                 luasnip.jump(-1)
