@@ -70,6 +70,11 @@
           silent = true;
         };
       }
+      {
+        mode = "i";
+        key = "<S-Tab>";
+        action = "<C-d>";
+      }
     ];
 
     languages = {
