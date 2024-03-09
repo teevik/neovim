@@ -38,6 +38,7 @@ in
           }, { buffer = buffer, mode = "n", noremap = true, silent = true })
 
           which_key.register({
+            a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Action" },
             w = {
               name = "Workspace",
               a = { "<cmd>lua vim.lsp.buf.add_workspace_folder()<cr>", "Add workspace" },
