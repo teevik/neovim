@@ -15,10 +15,11 @@
 
     colorschemes.catppuccin = {
       enable = true;
-      flavour = "mocha";
+
+      settings.flavour = "mocha";
     };
 
-    options = {
+    opts = {
       cursorline = true;
       number = true;
       relativenumber = true;

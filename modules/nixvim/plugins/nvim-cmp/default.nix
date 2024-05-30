@@ -5,7 +5,7 @@ let
 in
 {
   config = mkIf cfg.enable {
-    options = {
+    opts = {
       completeopt = "menu,menuone,noinsert";
     };
 
