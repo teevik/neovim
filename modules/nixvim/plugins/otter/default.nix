@@ -4,15 +4,15 @@ let
   cfg = config.plugins.otter;
 in
 {
-  options.plugins.otter = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      description = ''
-        Whether to enable otter
-      '';
-    };
-  };
+  # options.plugins.otter = {
+  #   enable = mkOption {
+  #     type = types.bool;
+  #     default = false;
+  #     description = ''
+  #       Whether to enable otter
+  #     '';
+  #   };
+  # };
 
   config = mkIf cfg.enable {
     extraPlugins = with pkgs.vimPlugins; [

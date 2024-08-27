@@ -111,6 +111,8 @@
     plugins = {
       # Coding
       treesitter.enable = true;
+      # TODO seperate treeitter?
+      treesitter.settings.highlight.enable = true;
       twilight.enable = false;
       vim-visual-multi.enable = true;
       todo-comments.enable = true;
